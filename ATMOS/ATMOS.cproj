@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.2</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
+    <ProjectGuid>{1b89c4b0-7c7d-4e08-aa45-cbb3bfc5510e}</ProjectGuid>
+    <avrdevice>ATmega644RFR2</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>C</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>ATMOS</AssemblyName>
+    <Name>ATMOS</Name>
+    <RootNamespace>ATMOS</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <UncachedRange />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.17.0" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../hal/atmega256rfr2/inc</Value>
+            <Value>../nwk/inc</Value>
+            <Value>../phy/atmegarfr2/inc</Value>
+            <Value>../sys/inc</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../hal/atmega256rfr2/inc</Value>
+            <Value>../nwk/inc</Value>
+            <Value>../phy/atmegarfr2/inc</Value>
+            <Value>../sys/inc</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'DSatellite' ">
+    <ToolchainSettings>
+      <AvrGcc>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>SATELLITE</Value>
+      <Value>PHY_ATMEGARFR2</Value>
+      <Value>HAL_ATMEGA256RFR2</Value>
+      <Value>F_CPU=16000000</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.preprocessor.UndefSymbols>
+    <ListValues>
+      <Value>BASE_A</Value>
+    </ListValues>
+  </avrgcc.compiler.preprocessor.UndefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../hal/atmega256rfr2/inc</Value>
+      <Value>../nwk/inc</Value>
+      <Value>../phy/atmegarfr2/inc</Value>
+      <Value>../sys/inc</Value>
+      <Value>..</Value>
+      <Value>../include</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
+    </ToolchainSettings>
+    <OutputPath>bin\DSatellite\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'DBaseA' ">
+    <ToolchainSettings>
+      <AvrGcc>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>BASE_A</Value>
+      <Value>HAL_ATMEGA256RFR2</Value>
+      <Value>PHY_ATMEGARFR2</Value>
+      <Value>F_CPU=16000000</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.preprocessor.UndefSymbols>
+    <ListValues>
+      <Value>SATELLITE</Value>
+    </ListValues>
+  </avrgcc.compiler.preprocessor.UndefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../hal/atmega256rfr2/inc</Value>
+      <Value>../nwk/inc</Value>
+      <Value>../phy/atmegarfr2/inc</Value>
+      <Value>../sys/inc</Value>
+      <Value>..</Value>
+      <Value>../include</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
+    </ToolchainSettings>
+    <OutputPath>bin\DBaseA\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ATMOS.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="common.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\atmega256rfr2\inc\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\atmega256rfr2\inc\halGpio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\atmega256rfr2\inc\halTimer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\atmega256rfr2\src\hal.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal\atmega256rfr2\src\halTimer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="inc\util.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwk.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkCommand.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkDataReq.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkFrame.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkGroup.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkRoute.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkRouteDiscovery.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkRx.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkSecurity.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\inc\nwkTx.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwk.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkDataReq.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkFrame.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkGroup.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkRoute.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkRouteDiscovery.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkRx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkSecurity.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="nwk\src\nwkTx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="phy\atmegarfr2\inc\atmegarfr2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="phy\atmegarfr2\inc\phy.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="phy\atmegarfr2\src\phy.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\inc\sys.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\inc\sysConfig.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\inc\sysEncrypt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\inc\sysTimer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\inc\sysTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\src\sys.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\src\sysEncrypt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sys\src\sysTimer.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="hal\" />
+    <Folder Include="hal\atmega256rfr2\" />
+    <Folder Include="hal\atmega256rfr2\inc\" />
+    <Folder Include="hal\atmega256rfr2\src\" />
+    <Folder Include="drivers" />
+    <Folder Include="inc" />
+    <Folder Include="include" />
+    <Folder Include="nwk\" />
+    <Folder Include="nwk\inc\" />
+    <Folder Include="nwk\src\" />
+    <Folder Include="phy\" />
+    <Folder Include="phy\atmegarfr2\" />
+    <Folder Include="phy\atmegarfr2\inc\" />
+    <Folder Include="phy\atmegarfr2\src\" />
+    <Folder Include="sys\" />
+    <Folder Include="sys\inc\" />
+    <Folder Include="sys\src\" />
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>

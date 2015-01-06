@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "ATMOS", "ATMOS\ATMOS.cproj", "{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DBaseA|AVR = DBaseA|AVR
+		Debug|AVR = Debug|AVR
+		DSatellite|AVR = DSatellite|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.DBaseA|AVR.ActiveCfg = DBaseA|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.DBaseA|AVR.Build.0 = DBaseA|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.Debug|AVR.ActiveCfg = Debug|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.Debug|AVR.Build.0 = Debug|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.DSatellite|AVR.ActiveCfg = DSatellite|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.DSatellite|AVR.Build.0 = DSatellite|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.Release|AVR.ActiveCfg = Release|AVR
+		{1B89C4B0-7C7D-4E08-AA45-CBB3BFC5510E}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
