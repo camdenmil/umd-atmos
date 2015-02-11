@@ -12,11 +12,11 @@ static void APP_TaskHandler(void)
 
 int main(void)
 {
-  SYS_Init();
+  //SYS_Init(); //Commented out until wireless hardware is tuned
 
   while (1)
   {
-    SYS_TaskHandler();
+    //SYS_TaskHandler(); //Commented out until wireless hardware is tuned
     APP_TaskHandler();
   }
 }
