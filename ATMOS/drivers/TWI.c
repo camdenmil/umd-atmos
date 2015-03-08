@@ -20,13 +20,15 @@ Function: Initializes the 2-wire Serial Interface as a master
 Args:
 	unsigned long - SCL frequency (Do not exceed 400kHz)
 Returns:
-	int - status (0 on success, nonzero otherwise)
+	char - status (0 on failure, nonzero otherwise)
 */
-int TWI_Init(unsigned long freq){
+char TWI_Init(unsigned long freq){
 	TWBR=(unsigned char)(((F_CPU/freq)-16UL)/8UL); //Compute settings value and set frequency
 	TWCR=(1 << TWEN);
 	
-	return 0; //May want to actually check for success here
+	TWAR=0; //Disable slave mode
+	
+	return 1; //May want to actually check for success here
 }
 
 /*
@@ -36,16 +38,16 @@ Function: Starts a transmission over the TWI Bus
 Args:
 	unsigned char - Address of device to send to
 Returns:
-	int - status code, TWI_SLAW_ACK on success, other code otherwise
+	char - status code, TWI_SLAW_ACK on success, other code otherwise
 */
-int TWI_BeginWrite(unsigned char address){
+char TWI_BeginWrite(unsigned char address){
 	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
 	if(stat!=TWI_START && stat!=TWI_REPEAT_START)return TWSR & TWSR_MASK; //Check for success
 	
-	TWDR = (address<<1) & SLAW_MASK; //reset bit 0 to send a write bit
+	TWDR = (address<<1) | SLAW_MASK; //set bit 0 to send a write bit
 	TWCR = (1<<TWINT)|(1<<TWEN);
 	while ((TWCR & (1<<TWINT)) == 0);
 	
@@ -59,16 +61,16 @@ Function: Starts a read over the TWI Bus
 Args:
 	unsigned char - Address of device to read from
 Returns:
-	int - status code, TWI_SLAR_ACK on success, other code otherwise
+	char - status code, TWI_SLAR_ACK on success, other code otherwise
 */
-int TWI_BeginRead(unsigned char address){
+char TWI_BeginRead(unsigned char address){
 	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
 	if(stat!=TWI_START && stat!=TWI_REPEAT_START)return TWSR & TWSR_MASK; //Check for success
 	
-	TWDR = (address<<1) & SLAW_MASK; //reset bit 0 to send a write bit
+	TWDR = (address<<1) & SLAR_MASK; //reset bit 0 to send a read bit
 	TWCR = (1<<TWINT)|(1<<TWEN);
 	while ((TWCR & (1<<TWINT)) == 0);
 	
@@ -76,15 +78,15 @@ int TWI_BeginRead(unsigned char address){
 }
 
 /*
-TWI_Write
+TWI_WriteByte
 -----------
 Function: Sends a byte over TWI
 Args:
 	unsigned char - byte to send
 Returns:
-	int - status code, TWI_SENT_ACK or TWI_SENT_NACK on success, be sure to check for ACK or NACK
+	char - status code, TWI_SENT_ACK or TWI_SENT_NACK on success, be sure to check for ACK or NACK
 */
-int TWI_Write(unsigned char data){
+char TWI_WriteByte(unsigned char data){
 	TWDR = data; //Stage the data to send
 	TWCR = (1<<TWINT)|(1<<TWEN);
 	while ((TWCR & (1<<TWINT)) == 0);//Send the data
@@ -99,9 +101,9 @@ Function: Receives a byte over TWI and returns an ACK
 Args:
 	unsigned char *- pointer to a byte to store the received byte in
 Returns:
-	int - status code, TWI_REC_ACK on success, other code otherwise
+	char - status code, TWI_REC_ACK on success, other code otherwise
 */
-int TWI_ReadAck(unsigned char *data){
+char TWI_ReadAck(unsigned char *data){
 	TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA); //Start receiving, ending with an ACK
 	while ((TWCR & (1<<TWINT)) == 0);
 	*data=TWDR; //Store the data
@@ -116,9 +118,9 @@ Function: Receives a byte over TWI and returns a NACK
 Args:
 	unsigned char *- pointer to a byte to store the received byte in
 Returns:
-	int - status code, TWI_REC_NACK on success, other code otherwise
+	char - status code, TWI_REC_NACK on success, other code otherwise
 */
-int TWI_ReadNack(unsigned char *data){
+char TWI_ReadNack(unsigned char *data){
 	TWCR = (1<<TWINT)|(1<<TWEN); //Start receiving, ending with a NACK
 	while ((TWCR & (1<<TWINT)) == 0);
 	*data=TWDR; //Store the data
@@ -133,15 +135,16 @@ Function: Sends a Stop bit, be sure to send a Start bit before future interactio
 Args:
 	void
 Returns:
-	int - should always be zero
+	char - should always be nonzero
 */
-int TWI_Stop(void){
+char TWI_Stop(void){
 	TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
-	return 0;
+	while ((TWCR & (1<<TWINT)) == 0);
+	return 1;
 }
 
 /*
-TWI_ReadByes
+TWI_Read
 -----------
 Function: Reads multiple bytes from the TWI bus, be sure to send a Start first
 Args:
@@ -149,12 +152,12 @@ Args:
 	int - number of bytes to receive
 	bool - whether or not to send an ACK on the last byte, sends NACK if false
 Returns:
-	int - status code, TWI_REC_ACK or TWI_REC_NACK on success depending on function arguments
+	char - status code, TWI_REC_ACK or TWI_REC_NACK on success depending on function arguments
 Note:
 	Does not contain buffer overrun protection
 */
-int TWI_ReadBytes(unsigned char *data, int amount, bool ack){
-	int status=0;
+char TWI_Read(unsigned char *data, int amount, bool ack){
+	char status=0;
 	for(int i=0;i<amount;i++){
 		if((!ack) && ((amount-1)==i)){
 			status=TWI_ReadNack(&data[i]); //if a NACK as chosen, receive with a NACK
@@ -168,21 +171,21 @@ int TWI_ReadBytes(unsigned char *data, int amount, bool ack){
 }
 
 /*
-TWI_WriteByes
+TWI_Write
 -----------
 Function: Writes multiple bytes to the TWI bus, be sure to send a Start first
 Args:
 	unsigned char *- Pointer to an array of bytes to send
 	int - number of bytes to send
 Returns:
-	int - status code, TWI_REC_ACK or TWI_REC_NACK on success, if you don't expect a NACK, be sure to check for it anyway
+	char - status code, TWI_REC_ACK or TWI_REC_NACK on success, if you don't expect a NACK, be sure to check for it anyway
 Note:
 	Does not contain buffer overrun protection, will return if a NACK is received partway through
 */
-int TWI_WriteBytes(unsigned char *data, int amount){
-	int status=0;
+char TWI_Write(unsigned char *data, int amount){
+	char status=0;
 	for(int i=0;i<amount;i++){
-		status=TWI_Write(data[i]); //If we're not at the last byte yet (or NACK not selected) receive with an ACK
+		status=TWI_WriteByte(data[i]); //If we're not at the last byte yet (or NACK not selected) receive with an ACK
 		if(status!=TWI_SENT_ACK)return status; //If NACK is received on the last byte, returning here is still success
 		//will return if something goes wrong partway through
 	}

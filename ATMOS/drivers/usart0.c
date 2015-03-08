@@ -115,7 +115,7 @@ void USART_Flush(void){
 /*ISR - Interrupt Service Routine. It is triggered when corresponding interrupts rise.
   This kind of "functions" are driven by interrupts, which is superior in terms of powering than a normal busy loop.
 */
-ISR(USART0_RX_vect){
+void ISR(unsigned int USART0_RX_vect){
 	//Write to a buffer?
 	
 	/*

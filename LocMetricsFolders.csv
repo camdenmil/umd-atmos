@@ -1,0 +1,24 @@
+Folder,Files,LOC,SLOC-P,SLOC-L,MVG,BLOC,C&SLOC,CLOC,CWORD,HCLOC,HCWORD
+Total,44,6230,3118,1583,301,841,189,2271,13658,1639,10762
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS,44,6230,3118,1583,301,841,189,2271,13658,1639,10762
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS,44,6230,3118,1583,301,841,189,2271,13658,1639,10762
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\devices,0,0,0,0,0,0,0,0,0,0,0
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\drivers,2,318,101,77,29,35,30,182,1000,19,45
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\hal,5,356,69,38,2,38,7,249,1583,227,1521
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\hal\atmega256rfr2,5,356,69,38,2,38,7,249,1583,227,1521
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\hal\atmega256rfr2\inc,3,188,27,13,0,18,4,143,937,135,909
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\hal\atmega256rfr2\src,2,168,42,25,2,20,3,106,646,92,612
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\inc,1,79,63,0,0,15,4,1,21,0,0
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\include,3,94,49,6,0,22,6,23,74,19,36
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\include\devices,1,16,3,0,0,7,1,6,13,6,11
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\include\drivers,2,78,46,6,0,15,5,17,61,13,25
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\nwk,19,3522,1889,1022,230,469,24,1164,6774,864,5788
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\nwk\inc,10,916,329,189,1,99,15,488,3156,450,3032
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\nwk\src,9,2606,1560,833,229,370,9,676,3618,414,2756
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\phy,3,976,613,329,19,138,106,225,1606,135,909
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\phy\atmegarfr2,3,976,613,329,19,138,106,225,1606,135,909
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\phy\atmegarfr2\inc,2,624,414,209,0,70,104,140,1232,90,606
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\phy\atmegarfr2\src,1,352,199,120,19,68,2,85,374,45,303
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\sys,8,833,311,107,20,110,10,412,2551,363,2439
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\sys\inc,5,476,157,27,0,70,9,249,1585,225,1519
+C:\Users\Camden\Documents\Atmel Studio\6.2\ATMOS\ATMOS\sys\src,3,357,154,80,20,40,1,163,966,138,920

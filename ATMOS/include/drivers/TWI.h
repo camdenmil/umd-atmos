@@ -9,6 +9,8 @@
 #ifndef TWI_H_
 #define TWI_H_
 
+#include <stdbool.h>
+
 //Status code defines
 //Mask off TWSR with 0xF8 (TWSR_MASK) to get status bits
 
@@ -43,7 +45,17 @@
 //Useful Masks
 
 #define TWSR_MASK			0xF8
-#define SLAW_MASK			0xFE
-#define SLAR_MASK			0x01
+#define SLAW_MASK			0x01
+#define SLAR_MASK			0xFE
+
+char TWI_Write(unsigned char *data, int amount);
+char TWI_Read(unsigned char *data, int amount, bool ack);
+char TWI_Stop(void);
+char TWI_ReadNack(unsigned char *data);
+char TWI_ReadAck(unsigned char *data);
+char TWI_WriteByte(unsigned char data);
+char TWI_BeginRead(unsigned char address);
+char TWI_BeginWrite(unsigned char address);
+char TWI_Init(unsigned long freq);
 
 #endif /* TWI_H_ */
