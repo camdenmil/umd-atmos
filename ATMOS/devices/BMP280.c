@@ -1,36 +1,30 @@
-/*
- * BMP280.c
+/**
+ * \file BMP280.c
+ *
+ * \brief BMP280 Pressure Sensor Library implementation
+ * 
+ * This library is intended only to work on the REV1 base station, check BMP280.h for address defines and the like
  *
  * Created: 2/10/2015 20:24:55
  *  Author: Camden Miller
  */ 
 
-//////////////////////////////////
-//BMP280 Pressure Sensor Library//
-//////////////////////////////////
-
-//Note: This library is intended only to work on the REV1 base station, check BMP280.h for address defines and the like
-
+//Includes//
 #include "devices/BMP280.h"
 #include "drivers/TWI.h"
 #include <math.h>
 
-static int dig_T2 , dig_T3 , dig_T4 , dig_P2 , dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9;
-static unsigned int dig_P1,dig_T1 ;
+static int dig_T2 , dig_T3 , dig_T4 , dig_P2 , dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9; //!<Calibration values from the BMP280
+static unsigned int dig_P1,dig_T1 ; //!<Calibration values from the BMP280
 
-static short oversampling, oversampling_t;
-static long signed int t_fine;
-static char error, status;
+static short oversampling, oversampling_t; //!<Oversampling sertings
+static long signed int t_fine; 
+static char error, status; //1<Error and status codes
 
-/*
-BMP280_Init
------------
-Function: Initializes the BMP280 and reads the calibration data from the device
-Args:
-	void
-Returns:
-	int - status (0 on success, nonzero otherwise)
-*/
+/*************************************************************************//**
+  @brief Initializes the BMP280 and reads the calibration data from the device
+  @return status (zero on failure, nonzero otherwise)
+*****************************************************************************/
 char BMP280_Init(void){
 	// Initialize the TWI library at 200kHz
 	TWI_Init(200000);
@@ -60,16 +54,12 @@ char BMP280_Init(void){
 		return (0);
 }
 
-/*
-static BMP280_ReadInt
------------
-Function: Reads an unsigned int from the BMP280
-Args:
-	char - The register address of the first byte of the uint
-	unsigned int * - A pointer to a uint to store the received data to
-Returns:
-	char - status (0 on success, nonzero otherwise)
-*/
+/*************************************************************************//**
+  @brief Reads an int from the BMP280
+  @param[in] address The register address of the first byte of the uint
+  @param[out] val* A pointer to a uint to store the received data to
+  @return status (zero on failure, nonzero otherwise)
+*****************************************************************************/
 static char BMP280_ReadInt(char address, int *val){
 	unsigned char data[2];	//char is 4 bits, 1 byte
 
@@ -82,16 +72,12 @@ static char BMP280_ReadInt(char address, int *val){
 	return(0);
 }
 
-/*
-static BMP280_ReadUInt
------------
-Function: Reads an unsigned int from the BMP280
-Args:
-	char - The register address of the first byte of the uint
-	unsigned int * - A pointer to a uint to store the received data to
-Returns:
-	char - status (zero on failure, nonzero otherwise)
-*/
+/*************************************************************************//**
+  @brief Reads an unsigned int from the BMP280
+  @param[in] address The register address of the first byte of the uint
+  @param[out] val* A pointer to a uint to store the received data to
+  @return status (zero on failure, nonzero otherwise)
+*****************************************************************************/
 static char BMP280_ReadUInt(char address, unsigned int *val){
 	unsigned char data[2];	//4 bits
 	data[0] = address;
@@ -103,19 +89,13 @@ static char BMP280_ReadUInt(char address, unsigned int *val){
 	return(0);
 }
 
-
-/*
-static BMP280_ReadBytes
------------
-Function: Reads some bytes from the BMP280
-Args:
-	unsigned char * - pointer to an array to store the bytes, put the starting register in values[0]
-	unsigned char - how many bytes to read
-Returns:
-	char - status (zero on failure, nonzero otherwise)
-Note:
-	Has no buffer overrun protection
-*/
+/*************************************************************************//**
+Has no buffer overrun protection
+  @brief Reads some bytes from the BMP280
+  @param[in] *values pointer to an array to store the bytes, put the starting register in values[0]
+  @param[in] length how many bytes to read
+  @return status (zero on failure, nonzero otherwise)
+*****************************************************************************/
 static char BMP280_ReadBytes(unsigned char *values, char length){
 	TWI_BeginWrite(BMP280_ADDR);
 	TWI_WriteByte(values[0]); //Write the register address
@@ -126,42 +106,41 @@ static char BMP280_ReadBytes(unsigned char *values, char length){
 	return(0);
 }
 
-/*
-static BMP280_WriteBytes
------------
-Function: Writes some bytes to the BMP280
-Args:
-	unsigned char * - pointer to an array to send, put the starting register in values[0]
-	unsigned char - how many bytes to write (including the starting register ie. sizeof(values))
-Returns:
-	char - status (zero on failure, nonzero otherwise)
-Note:
-	Has no buffer overrun protection
-*/
+/*************************************************************************//**
+Has no buffer overrun protection
+  @brief Reads some bytes from the BMP280
+  @param[in] *values pointer to an array to send, put the starting register in values[0]
+  @param[in] length how many bytes to write (including the starting register ie. sizeof(values))
+  @return status (zero on failure, nonzero otherwise)
+*****************************************************************************/
 static char BMP280_WriteBytes(unsigned char *values, char length){
 	TWI_BeginWrite(BMP280_ADDR);
 	if((TWI_Write(&values[0],length) == TWI_SENT_ACK) && (TWI_Stop() != 0)) return 1; //Send bytes, a STOP bit, and check for success
 	return(0);
 }
 
+/*************************************************************************//**
+  @brief Gets the oversampling setting for the library
+  @return oversampling
+*****************************************************************************/
 short BMP280_GetOversampling(void){
 	return oversampling;
 }
 
+/*************************************************************************//**
+  @brief Sets the oversampling setting for the library
+  @param[in] oss Oversampling setting
+  @return 1
+*****************************************************************************/
 char BMP280_SetOversampling(short oss){
 	oversampling = oss;
 	return (1);
 }
 
-/*
-char BMP280_StartMeasurement
------------
-Function: Starts a measurement
-Args:
-	void
-Returns:
-	char - time to wait for result (in ms)
-*/
+/*************************************************************************//**
+  @brief Starts a measurement
+  @return time to wait for result (in ms)
+*****************************************************************************/
 char BMP280_StartMeasurment(void){
 	unsigned char data[2], result, delay;
 	
@@ -205,16 +184,12 @@ char BMP280_StartMeasurment(void){
 	return(0); // or return 0 if there was a problem communicating with the BMP
 }
 
-/*
-char BMP280_GetUnPT
------------
-Function: Gets the uncalibrated temperature and pressure data
-Args:
-	double * - pointer to a place to store the pressure data
-	double * - pointer to a place to store the temperature data
-Returns:
-	char - status
-*/
+/*************************************************************************//**
+  @brief Gets the uncalibrated temperature and pressure data
+  @param[out] pointer to a place to store the pressure data
+  @param[out] pointer to a place to store the temperature data
+  @return status
+*****************************************************************************/
 char BMP280_GetUnPT(double *uP, double *uT){
 	unsigned char data[6];
 	char result;
@@ -231,16 +206,12 @@ char BMP280_GetUnPT(double *uP, double *uT){
 	return(result);
 }
 
-/*
-char BMP280_GetTemperatureAndPressure
------------
-Function: Gets temperature and pressure
-Args:
-	double * - pointer to a place to store the pressure data
-	double * - pointer to a place to store the temperature data
-Returns:
-	char - status
-*/
+/*************************************************************************//**
+  @brief Gets temperature and pressure
+  @param[out] pointer to a place to store the pressure data
+  @param[out] pointer to a place to store the temperature data
+  @return status
+*****************************************************************************/
 char BMP280_GetTemperatureAndPressure(double *T,double *P){
 	double uP,uT ;
 	char result = BMP280_GetUnPT(&uP,&uT);
@@ -262,19 +233,15 @@ char BMP280_GetTemperatureAndPressure(double *T,double *P){
 	return (0);
 }
 
-/*
-char BMP280_CalcTemperature
------------
-Function: Calculates temperature
-Args:
-	double * - pointer to a place to store the temperature data
-	double * - pointer to the uncalibrated temperature data
-Returns:
-	char - status
-*/
+/*************************************************************************//**
+  @brief Calculates temperature
+  @param[out] pointer to a place to store the temperature data
+  @param[in] pointer to the uncalibrated temperature data
+  @return status
+*****************************************************************************/
 char BMP280_CalcTemperature(double *T, double *uT){
 	double adc_T = *uT ;
-	//Serial.print("adc_T = "); Serial.println(adc_T,DEC);
+	//printf("adc_T = %d",adc_T);
 	
 	double var1 = (((double)adc_T)/16384.0-((double)dig_T1)/1024.0)*((double)dig_T2);
 	double var2 = ((((double)adc_T)/131072.0 - ((double)dig_T1)/8192.0)*(((double)adc_T)/131072.0 - ((double)dig_T1)/8192.0))*((double)dig_T3);
@@ -287,16 +254,12 @@ char BMP280_CalcTemperature(double *T, double *uT){
 	return (1);
 }
 
-/*
-char BMP280_CalcPressure
------------
-Function: Calculates temperature
-Args:
-	double * - pointer to a place to store the pressure data
-	double * - pointer to the uncalibrated pressure data
-Returns:
-	char - status
-*/
+/*************************************************************************//**
+  @brief Calculates pressure
+  @param[out] pointer to a place to store the pressure data
+  @param[in] pointer to the uncalibrated pressure data
+  @return status
+*****************************************************************************/
 char BMP280_CalcPressure(double *P,double uP){
 	//char result;
 	double var1 , var2 ;
@@ -347,17 +310,12 @@ char BMP280_CalcPressure(double *P,double uP){
 	return (1);
 }
 
-
-/*
-char BMP280_SeaLevel
------------
-Function: Calculates pressure at sea level given an altitude
-Args:
-	double - pressure reading
-	double - altitude
-Returns:
-	double - the corrected reading
-*/
+/*************************************************************************//**
+  @brief Calculates pressure at sea level given an altitude
+  @param[in] pressure reading
+  @param[in] altitude
+  @return the corrected reading
+*****************************************************************************/
 double BMP280_Sealevel(double P, double A){
 // Given a pressure P (mb) taken at a specific altitude (meters),
 // return the equivalent pressure (mb) at sea level.
@@ -365,31 +323,24 @@ double BMP280_Sealevel(double P, double A){
 	return(P/pow(1-(A/44330.0),5.255));
 }
 
-/*
-char BMP280_Altitude
------------
-Function: Calculates altitude
-Args:
-	double - pressure reading
-	double - sea level pressure
-Returns:
-	double - the corrected reading
-*/
+/*************************************************************************//**
+  @brief Calculates altitude
+  @param[in] pressure reading
+  @param[in] sea level pressure
+  @return the corrected reading
+*****************************************************************************/
 double BMP280_Altitude(double P, double P0){
 // Given a pressure measurement P (mb) and the pressure at a baseline P0 (mb),
 // return altitude (meters) above baseline.
 	return(44330.0*(1-pow(P/P0,1/5.255)));
 }
 
-/*
-char BMP280_GetError
------------
-Function: Returns the internal library error value
-Args:
-	void
-Returns:
-	char - error value
-*/
+/*************************************************************************//**
+  @brief Returns the internal library error value
+  @param[in] pressure reading
+  @param[in] sea level pressure
+  @return error value
+*****************************************************************************/
 char BMP280_GetError(void){
 // If any library command fails, you can retrieve an extended
 // error code using this command. Errors are from the wire library:

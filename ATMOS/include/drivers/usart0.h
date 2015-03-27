@@ -1,5 +1,7 @@
-/*
- * usart0.h
+/**
+ * \file usart0.h
+ *
+ * \brief USART0 in UART mode
  *
  * Created: 2/7/2015 20:37:01
  *  Author: Camden Miller
@@ -17,7 +19,6 @@
 #endif /* F_CPU */
 
 //Function Prototypes//
-
 int USART0_putchar_printf(char var, FILE *stream);
 void USART0_Init(unsigned long baud);
 void USART0_Transmit(unsigned char data);

@@ -1,27 +1,21 @@
-/*
- * TWI.c
+/**
+ * \file TWI.c
+ * 
+ * \brief TWI hardware interface library implementation in master mode
  *
  * Created: 2/7/2015 21:12:00
  *  Author: Camden Miller
  */ 
 
-////////////////////////////////////////////
-//Library code for TWI operating as master//
-////////////////////////////////////////////
-
 #include "drivers/TWI.h"
 #include <avr/io.h>
 #include <stdbool.h>
 
-/*
-TWI_Init
------------
-Function: Initializes the 2-wire Serial Interface as a master
-Args:
-	unsigned long - SCL frequency (Do not exceed 400kHz)
-Returns:
-	char - status (0 on failure, nonzero otherwise)
-*/
+/*************************************************************************//**
+  @brief Initializes the 2-wire Serial Interface as a master
+  @param[in] freq SCL frequency (Do not exceed 400kHz)
+  @return Status (@c 0 on failure, nonzero otherwise)
+*****************************************************************************/
 char TWI_Init(unsigned long freq){
 	TWBR=(unsigned char)(((F_CPU/freq)-16UL)/8UL); //Compute settings value and set frequency
 	TWCR=(1 << TWEN);
@@ -31,15 +25,11 @@ char TWI_Init(unsigned long freq){
 	return 1; //May want to actually check for success here
 }
 
-/*
-TWI_BeginWrite
------------
-Function: Starts a transmission over the TWI Bus
-Args:
-	unsigned char - Address of device to send to
-Returns:
-	char - status code, TWI_SLAW_ACK on success, other code otherwise
-*/
+/*************************************************************************//**
+  @brief Starts a transmission over the TWI Bus
+  @param[in] address Address of device to send to
+  @return Status code, TWI_SLAW_ACK on success, other code otherwise
+*****************************************************************************/
 char TWI_BeginWrite(unsigned char address){
 	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
@@ -54,15 +44,11 @@ char TWI_BeginWrite(unsigned char address){
 	return TWSR & TWSR_MASK;//Return the status code
 }
 
-/*
-TWI_BeginRead
------------
-Function: Starts a read over the TWI Bus
-Args:
-	unsigned char - Address of device to read from
-Returns:
-	char - status code, TWI_SLAR_ACK on success, other code otherwise
-*/
+/*************************************************************************//**
+  @brief Starts a transmission over the TWI Bus
+  @param[in] address Address of device to send to
+  @return Status code, TWI_SLAW_ACK on success, other code otherwise
+*****************************************************************************/
 char TWI_BeginRead(unsigned char address){
 	TWCR = (0<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
@@ -77,15 +63,13 @@ char TWI_BeginRead(unsigned char address){
 	return TWSR & TWSR_MASK;//Return the status code
 }
 
-/*
-TWI_WriteByte
------------
-Function: Sends a byte over TWI
-Args:
-	unsigned char - byte to send
-Returns:
-	char - status code, TWI_SENT_ACK or TWI_SENT_NACK on success, be sure to check for ACK or NACK
-*/
+/*************************************************************************//**
+When checking the status code, bear in mind that it could be an ACK or a NACK
+depending on what the slave is expecting/doing.
+  @brief Sends a byte over TWI
+  @param[in] data byte to send
+  @return Status code, TWI_SENT_ACK or TWI_SENT_NACK on success
+*****************************************************************************/
 char TWI_WriteByte(unsigned char data){
 	TWDR = data; //Stage the data to send
 	TWCR = (1<<TWINT)|(1<<TWEN);
@@ -94,15 +78,11 @@ char TWI_WriteByte(unsigned char data){
 	return TWSR&TWSR_MASK;//Return the status code
 }
 
-/*
-TWI_ReadAck
------------
-Function: Receives a byte over TWI and returns an ACK
-Args:
-	unsigned char *- pointer to a byte to store the received byte in
-Returns:
-	char - status code, TWI_REC_ACK on success, other code otherwise
-*/
+/*************************************************************************//**
+  @brief Receives a byte over TWI and returns an ACK
+  @param[out] *data pointer to a byte to store the received byte in
+  @return Status code, TWI_REC_ACK on success, other code otherwise
+*****************************************************************************/
 char TWI_ReadAck(unsigned char *data){
 	TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA); //Start receiving, ending with an ACK
 	while ((TWCR & (1<<TWINT)) == 0);
@@ -111,15 +91,11 @@ char TWI_ReadAck(unsigned char *data){
 	return TWSR&TWSR_MASK;//Return the status code
 }
 
-/*
-TWI_ReadNack
------------
-Function: Receives a byte over TWI and returns a NACK
-Args:
-	unsigned char *- pointer to a byte to store the received byte in
-Returns:
-	char - status code, TWI_REC_NACK on success, other code otherwise
-*/
+/*************************************************************************//**
+  @brief Receives a byte over TWI and returns a NACK
+  @param[out] *data pointer to a byte to store the received byte in
+  @return Status code, TWI_REC_NACK on success, other code otherwise
+*****************************************************************************/
 char TWI_ReadNack(unsigned char *data){
 	TWCR = (1<<TWINT)|(1<<TWEN); //Start receiving, ending with a NACK
 	while ((TWCR & (1<<TWINT)) == 0);
@@ -128,34 +104,26 @@ char TWI_ReadNack(unsigned char *data){
 	return TWSR&TWSR_MASK;//Return the status code
 }
 
-/*
-TWI_Stop
------------
-Function: Sends a Stop bit, be sure to send a Start bit before future interactions on the bus
-Args:
-	void
-Returns:
-	char - should always be nonzero
-*/
+/*************************************************************************//**
+  @brief Sends a Stop bit, be sure to send a Start bit before future interactions on the bus
+  @return Status code, should always be nonzero
+*****************************************************************************/
 char TWI_Stop(void){
 	TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
 	while ((TWCR & (1<<TWINT)) == 0);
 	return 1;
 }
 
-/*
-TWI_Read
------------
-Function: Reads multiple bytes from the TWI bus, be sure to send a Start first
-Args:
-	unsigned char *- Pointer to an array to store the bytes
-	int - number of bytes to receive
-	bool - whether or not to send an ACK on the last byte, sends NACK if false
-Returns:
-	char - status code, TWI_REC_ACK or TWI_REC_NACK on success depending on function arguments
-Note:
-	Does not contain buffer overrun protection
-*/
+/*************************************************************************//**
+When using this function, be sure to send a START first; this only automates calls to TWI_ReadAck and/or TWI_ReadNack.
+<p>Does not contain buffer overrun protection.
+  @brief Reads multiple bytes from the TWI bus
+  @param[out] *data Pointer to an array to store the bytes
+  @param[in] amount Number of bytes to recieve
+  @param[in] whether or not to send an ACK on the last byte, sends NACK if false
+  @return Status code, TWI_REC_ACK or TWI_REC_NACK on success depending on function arguments
+  @see TWI_BeginRead
+*****************************************************************************/
 char TWI_Read(unsigned char *data, int amount, bool ack){
 	char status=0;
 	for(int i=0;i<amount;i++){
@@ -170,18 +138,16 @@ char TWI_Read(unsigned char *data, int amount, bool ack){
 	return status;
 }
 
-/*
-TWI_Write
------------
-Function: Writes multiple bytes to the TWI bus, be sure to send a Start first
-Args:
-	unsigned char *- Pointer to an array of bytes to send
-	int - number of bytes to send
-Returns:
-	char - status code, TWI_REC_ACK or TWI_REC_NACK on success, if you don't expect a NACK, be sure to check for it anyway
-Note:
-	Does not contain buffer overrun protection, will return if a NACK is received partway through
-*/
+/*************************************************************************//**
+When using this function, be sure to send a START first; this only automates calls to TWI_Write.
+<p>Does not contain buffer overrun protection. Function will return if a NACK is received partway through. 
+If you don't expect a NACK, be sure to check for it anyway.
+  @brief Writes multiple bytes to the TWI bus
+  @param[in] *data Pointer to an array of bytes to send
+  @param[in] amount Number of bytes to send
+  @return Status code, TWI_REC_ACK or TWI_REC_NACK on success
+  @see TWI_BeginWrite
+*****************************************************************************/
 char TWI_Write(unsigned char *data, int amount){
 	char status=0;
 	for(int i=0;i<amount;i++){
