@@ -6,6 +6,8 @@ ATMOS.c
 
 devices\BMP280.c
 
+drivers\ADC.c
+
 drivers\TWI.c
 
 drivers\usart0.c

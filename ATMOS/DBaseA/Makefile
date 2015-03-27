@@ -58,6 +58,7 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../ATMOS.c \
 ../devices/BMP280.c \
+../drivers/ADC.c \
 ../drivers/TWI.c \
 ../drivers/usart0.c \
 ../hal/atmega256rfr2/src/hal.c \
@@ -86,6 +87,7 @@ ASM_SRCS +=
 OBJS +=  \
 ATMOS.o \
 devices/BMP280.o \
+drivers/ADC.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -107,6 +109,7 @@ sys/src/sysTimer.o
 OBJS_AS_ARGS +=  \
 ATMOS.o \
 devices/BMP280.o \
+drivers/ADC.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -128,6 +131,7 @@ sys/src/sysTimer.o
 C_DEPS +=  \
 ATMOS.d \
 devices/BMP280.d \
+drivers/ADC.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -149,6 +153,7 @@ sys/src/sysTimer.d
 C_DEPS_AS_ARGS +=  \
 ATMOS.d \
 devices/BMP280.d \
+drivers/ADC.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -178,6 +183,8 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

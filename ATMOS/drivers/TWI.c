@@ -64,7 +64,7 @@ Returns:
 	char - status code, TWI_SLAR_ACK on success, other code otherwise
 */
 char TWI_BeginRead(unsigned char address){
-	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
+	TWCR = (0<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
