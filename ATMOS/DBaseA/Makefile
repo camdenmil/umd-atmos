@@ -57,8 +57,13 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../ATMOS.c \
+../common.c \
 ../devices/BMP280.c \
+../devices/K30.c \
+../devices/Si7020.c \
+../devices/TGS2600.c \
 ../drivers/ADC.c \
+../drivers/PWR.c \
 ../drivers/TWI.c \
 ../drivers/usart0.c \
 ../hal/atmega256rfr2/src/hal.c \
@@ -86,8 +91,13 @@ ASM_SRCS +=
 
 OBJS +=  \
 ATMOS.o \
+common.o \
 devices/BMP280.o \
+devices/K30.o \
+devices/Si7020.o \
+devices/TGS2600.o \
 drivers/ADC.o \
+drivers/PWR.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -108,8 +118,13 @@ sys/src/sysTimer.o
 
 OBJS_AS_ARGS +=  \
 ATMOS.o \
+common.o \
 devices/BMP280.o \
+devices/K30.o \
+devices/Si7020.o \
+devices/TGS2600.o \
 drivers/ADC.o \
+drivers/PWR.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -130,8 +145,13 @@ sys/src/sysTimer.o
 
 C_DEPS +=  \
 ATMOS.d \
+common.d \
 devices/BMP280.d \
+devices/K30.d \
+devices/Si7020.d \
+devices/TGS2600.d \
 drivers/ADC.d \
+drivers/PWR.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -152,8 +172,13 @@ sys/src/sysTimer.d
 
 C_DEPS_AS_ARGS +=  \
 ATMOS.d \
+common.d \
 devices/BMP280.d \
+devices/K30.d \
+devices/Si7020.d \
+devices/TGS2600.d \
 drivers/ADC.d \
+drivers/PWR.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -224,52 +249,62 @@ LIB_DEP+=
 
 
 
+
+
+
+
+
+
+
+
+
+
 ./%.o: .././%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 devices/%.o: ../devices/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 drivers/%.o: ../drivers/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 hal/atmega256rfr2/src/%.o: ../hal/atmega256rfr2/src/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 nwk/src/%.o: ../nwk/src/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 phy/atmegarfr2/src/%.o: ../phy/atmegarfr2/src/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 sys/src/%.o: ../sys/src/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DBASE_A -DHAL_ATMEGA256RFR2 -DPHY_ATMEGARFR2 -DF_CPU=16000000  -USATELLITE  -I"../hal/atmega256rfr2/inc" -I"../nwk/inc" -I"../phy/atmegarfr2/inc" -I"../sys/inc" -I".." -I"../include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega644rfr2 -c -std=gnu99 -Wl,-u,vfprintf -lprintf_flt -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
@@ -298,7 +333,7 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR/GNU Linker : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="ATMOS.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega644rfr2  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="ATMOS.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm -Wl,-lprintf_flt  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega644rfr2  
 	@echo Finished building target: $@
 	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "ATMOS.elf" "ATMOS.hex"
 	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1056\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "ATMOS.elf" "ATMOS.eep" || exit 0

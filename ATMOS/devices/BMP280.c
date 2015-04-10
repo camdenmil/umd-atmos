@@ -12,14 +12,21 @@
 //Includes//
 #include "devices/BMP280.h"
 #include "drivers/TWI.h"
-#include <math.h>
+#include "drivers/usart0.h"
+#include "math.h"
 
-static int dig_T2 , dig_T3 , dig_T4 , dig_P2 , dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9; //!<Calibration values from the BMP280
+static int dig_T2 , dig_T3 , dig_P2 , dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9; //!<Calibration values from the BMP280
 static unsigned int dig_P1,dig_T1 ; //!<Calibration values from the BMP280
 
 static short oversampling, oversampling_t; //!<Oversampling sertings
 static long signed int t_fine; 
 static char error, status; //1<Error and status codes
+
+//static function prototypes//
+static char BMP280_ReadInt(char, int *);
+static char BMP280_ReadUInt(char, unsigned int *);
+static char BMP280_ReadBytes(unsigned char *, char);
+static char BMP280_WriteBytes(unsigned char *, char);
 
 /*************************************************************************//**
   @brief Initializes the BMP280 and reads the calibration data from the device
@@ -27,7 +34,7 @@ static char error, status; //1<Error and status codes
 *****************************************************************************/
 char BMP280_Init(void){
 	// Initialize the TWI library at 200kHz
-	TWI_Init(200000);
+	//TWI_Init(200000);
 
 	// The BMP280 includes factory calibration data stored on the device.
 	// Each device has different numbers, these must be retrieved and
@@ -48,6 +55,7 @@ char BMP280_Init(void){
 		BMP280_ReadInt(0x9A, &dig_P7)  &&
 		BMP280_ReadInt(0x9C, &dig_P8)  &&
 		BMP280_ReadInt(0x9E, &dig_P9)){
+			printf("\nT: %i ,%i ,%i P: %i ,%i ,%i ,%i ,%i ,%i ,%i ,%1 ,%i \n",dig_T1,dig_T2,dig_T3,dig_P1,dig_P2,dig_P3,dig_P4,dig_P5,dig_P6,dig_P7,dig_P8,dig_P9);
 		return (1);
 	}
 	else 
@@ -61,6 +69,7 @@ char BMP280_Init(void){
   @return status (zero on failure, nonzero otherwise)
 *****************************************************************************/
 static char BMP280_ReadInt(char address, int *val){
+	//printf("\nBMP280_ReadInt");
 	unsigned char data[2];	//char is 4 bits, 1 byte
 
 	data[0] = address;
@@ -79,7 +88,9 @@ static char BMP280_ReadInt(char address, int *val){
   @return status (zero on failure, nonzero otherwise)
 *****************************************************************************/
 static char BMP280_ReadUInt(char address, unsigned int *val){
+	//printf("\nBMP280_ReadUInt");
 	unsigned char data[2];	//4 bits
+	
 	data[0] = address;
 	if (BMP280_ReadBytes(&data[0],2)){
 		*val = (((unsigned int)data[1]<<8)|(unsigned int)data[0]);
@@ -97,11 +108,15 @@ Has no buffer overrun protection
   @return status (zero on failure, nonzero otherwise)
 *****************************************************************************/
 static char BMP280_ReadBytes(unsigned char *values, char length){
+	//printf("BMP280_ReadBytes");
+	//printf("0x%1x",(unsigned)TWI_BeginWrite(BMP280_ADDR));
 	TWI_BeginWrite(BMP280_ADDR);
-	TWI_WriteByte(values[0]); //Write the register address
+	//printf("0x%1x",(unsigned)TWI_WriteByte(values[0]));
+	TWI_WriteByte(values[0]);//Write the register address
 	status = TWI_BeginRead(BMP280_ADDR); //Send a repeated start
+	//printf("0x%1x",status);
 	if (status == TWI_SLAR_ACK){
-		if((TWI_Read(&values[0],length,true) == TWI_REC_ACK) && (TWI_Stop() != 0)) return(1); //Receive bytes, send a STOP bit, and check for success
+		if(((TWI_Read(&values[0],length,false)&TWSR_MASK) == TWI_REC_NACK) && (TWI_Stop() != 0)) return(1); //Receive bytes, send a STOP bit, and check for success
 	}
 	return(0);
 }
@@ -177,7 +192,7 @@ char BMP280_StartMeasurment(void){
 		delay = 9;
 		break;
 	}
-	result = BMP280_WriteBytes(data, 2);
+	result = BMP280_WriteBytes(&data[0], 2);
 	if (result) // good write?
 	return(delay); // return the delay in ms (rounded up) to wait before retrieving data
 	else
@@ -196,7 +211,7 @@ char BMP280_GetUnPT(double *uP, double *uT){
 	
 	data[0] = BMP280_REG_RESULT_PRESSURE; //0xF7
 
-	result = BMP280_ReadBytes(data, 6); // 0xF7; xF8, 0xF9, 0xFA, 0xFB, 0xFC
+	result = BMP280_ReadBytes(&data[0], 6); // 0xF7; xF8, 0xF9, 0xFA, 0xFB, 0xFC
 	if (result){ // good read
 		double factor = pow(2, 4);
 		*uP = (( (data[0] *256.0) + data[1] + (data[2]/256.0))) * factor ;	//20bit UP
@@ -220,7 +235,7 @@ char BMP280_GetTemperatureAndPressure(double *T,double *P){
 		result = BMP280_CalcTemperature(T,&uT);
 		if(result){
 			// calculate the pressure
-			result = BMP280_CalcPressure(&P,uP);
+			result = BMP280_CalcPressure(P,&uP);
 			if(result)return (1);
 			else error = 3 ;	// pressure error ;
 			return (0);
@@ -260,7 +275,7 @@ char BMP280_CalcTemperature(double *T, double *uT){
   @param[in] pointer to the uncalibrated pressure data
   @return status
 *****************************************************************************/
-char BMP280_CalcPressure(double *P,double uP){
+char BMP280_CalcPressure(double *P,double *uP){
 	//char result;
 	double var1 , var2 ;
 	
@@ -280,18 +295,18 @@ char BMP280_CalcPressure(double *P,double uP){
 	
 	//Serial.print("(32768.0 + var1) = ");Serial.println((32768.0 + var1),5);
 	
-	double t_var = (32768.0 + var1)/32768.0;
+	//double t_var = (32768.0 + var1)/32768.0;
 	//Serial.print("((32768.0 + var1)/32768.0) = "); Serial.println(t_var,5);
 	//Serial.print("dig_P1 = ");Serial.println(dig_P1);
 	//Serial.print("dig_P1 = ");Serial.println((double)dig_P1,5);
-	double tt_var = t_var * (double)dig_P1;
+	//double tt_var = t_var * (double)dig_P1;
 	
 	//Serial.print("mulipication = "); Serial.println(tt_var,5);
 	
 	var1 = ((32768.0 + var1)/32768.0)*((double)dig_P1);
 	//Serial.print("var1 = ");Serial.println(var1,2);
 	
-	double p = 1048576.0- (double)uP;
+	double p = 1048576.0- (double)*uP;
 	//Serial.print("p = ");Serial.println(p,2);
 	
 	p = (p-(var2/4096.0))*6250.0/var1 ;	//overflow

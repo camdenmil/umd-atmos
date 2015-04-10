@@ -38,10 +38,6 @@
 
 //Prototypes//
 char BMP280_Init(void);
-static char BMP280_ReadInt(char, int *);
-static char BMP280_ReadUInt(char, unsigned int *);
-static char BMP280_ReadBytes(unsigned char *, char);
-static char BMP280_WriteBytes(unsigned char *, char);
 char BMP280_GetUnPT(double *, double *);
 short BMP280_GetOversampling(void);
 char BMP280_SetOversampling(short oss);
@@ -49,9 +45,11 @@ char BMP280_StartMeasurment(void);
 char BMP280_GetUnPT(double *, double *);
 char BMP280_GetTemperatureAndPressure(double *,double *);
 char BMP280_CalcTemperature(double *, double *);
-char BMP280_CalcPressure(double *,double);
+char BMP280_CalcPressure(double *,double *);
 double BMP280_Sealevel(double , double);
 double BMP280_Altitude(double , double);
 char BMP280_GetError(void);
+
+//static functions are prototyped in BMP280.c as they're only intended for use there
 
 #endif /* BMP280_H_ */

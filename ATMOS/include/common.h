@@ -10,7 +10,13 @@
 #define COMMON_H_
 
 #include <stdint.h>
-#include "util.h"
+#include "avr/io.h"
+#include "avr/delay.h"
 
+#define SHIFTED_DIVISOR	0x988000
+
+
+//prototypes//
+unsigned int check_crc(uint16_t, uint8_t);
 
 #endif /* COMMON_H_ */

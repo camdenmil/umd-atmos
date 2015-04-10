@@ -4,9 +4,19 @@
 
 ATMOS.c
 
+common.c
+
 devices\BMP280.c
 
+devices\K30.c
+
+devices\Si7020.c
+
+devices\TGS2600.c
+
 drivers\ADC.c
+
+drivers\PWR.c
 
 drivers\TWI.c
 

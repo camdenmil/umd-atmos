@@ -66,8 +66,8 @@ returned.
  */
 ///@{
 #define TWSR_MASK			0xF8 /**<@brief Mask off with TWSR to get status codes */
-#define SLAW_MASK			0x01 /**<@brief OR i2c address with this to set R/W bit */
-#define SLAR_MASK			0xFE /**<@brief AND i2c address with this to reset R/W bit */
+#define SLAW_MASK			0xFE /**<@brief AND i2c address with this to reset R/W bit */
+#define SLAR_MASK			0x01 /**<@brief OR i2c address with this to set R/W bit */
 
 ///@}
 

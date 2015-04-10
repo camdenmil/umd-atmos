@@ -8,6 +8,7 @@
  */ 
 
 #include "drivers/TWI.h"
+#include "drivers/usart0.h"
 #include <avr/io.h>
 #include <stdbool.h>
 
@@ -17,10 +18,12 @@
   @return Status (@c 0 on failure, nonzero otherwise)
 *****************************************************************************/
 char TWI_Init(unsigned long freq){
+	//printf("TWI_Init");
+	TWSR=0x00;
 	TWBR=(unsigned char)(((F_CPU/freq)-16UL)/8UL); //Compute settings value and set frequency
 	TWCR=(1 << TWEN);
 	
-	TWAR=0; //Disable slave mode
+	//TWAR=0; //Disable slave mode
 	
 	return 1; //May want to actually check for success here
 }
@@ -31,36 +34,37 @@ char TWI_Init(unsigned long freq){
   @return Status code, TWI_SLAW_ACK on success, other code otherwise
 *****************************************************************************/
 char TWI_BeginWrite(unsigned char address){
+	//printf("TWI_BeginWrite");
 	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
+	int i=0;
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
 	if(stat!=TWI_START && stat!=TWI_REPEAT_START)return TWSR & TWSR_MASK; //Check for success
 	
-	TWDR = (address<<1) | SLAW_MASK; //set bit 0 to send a write bit
-	TWCR = (1<<TWINT)|(1<<TWEN);
-	while ((TWCR & (1<<TWINT)) == 0);
-	
-	return TWSR & TWSR_MASK;//Return the status code
+	stat = TWI_WriteByte((address<<1) & SLAW_MASK); //reset bit 0 to send a read bit, send
+	//printf("0x%1x",(unsigned)stat);
+	return stat;//Return the status code
 }
 
 /*************************************************************************//**
   @brief Starts a transmission over the TWI Bus
   @param[in] address Address of device to send to
-  @return Status code, TWI_SLAW_ACK on success, other code otherwise
+  @return Status code, TWI_SLAR_ACK on success, other code otherwise
 *****************************************************************************/
 char TWI_BeginRead(unsigned char address){
-	TWCR = (0<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
+	//printf("TWI_BeginRead");
+	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
+	//printf("0x%1x",(unsigned)stat);
 	if(stat!=TWI_START && stat!=TWI_REPEAT_START)return TWSR & TWSR_MASK; //Check for success
 	
-	TWDR = (address<<1) & SLAR_MASK; //reset bit 0 to send a read bit
-	TWCR = (1<<TWINT)|(1<<TWEN);
-	while ((TWCR & (1<<TWINT)) == 0);
+	stat = TWI_WriteByte((address<<1) | SLAR_MASK); //set bit 0 to send a read bit and send it
+	//printf("0x%1x",(unsigned)stat);
 	
-	return TWSR & TWSR_MASK;//Return the status code
+	return stat;//Return the status code
 }
 
 /*************************************************************************//**
@@ -71,6 +75,7 @@ depending on what the slave is expecting/doing.
   @return Status code, TWI_SENT_ACK or TWI_SENT_NACK on success
 *****************************************************************************/
 char TWI_WriteByte(unsigned char data){
+	//printf("TWI_WriteByte");
 	TWDR = data; //Stage the data to send
 	TWCR = (1<<TWINT)|(1<<TWEN);
 	while ((TWCR & (1<<TWINT)) == 0);//Send the data
@@ -84,6 +89,7 @@ char TWI_WriteByte(unsigned char data){
   @return Status code, TWI_REC_ACK on success, other code otherwise
 *****************************************************************************/
 char TWI_ReadAck(unsigned char *data){
+	//printf("TWI_ReadAck");
 	TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA); //Start receiving, ending with an ACK
 	while ((TWCR & (1<<TWINT)) == 0);
 	*data=TWDR; //Store the data
@@ -97,6 +103,7 @@ char TWI_ReadAck(unsigned char *data){
   @return Status code, TWI_REC_NACK on success, other code otherwise
 *****************************************************************************/
 char TWI_ReadNack(unsigned char *data){
+	//printf("TWI_ReadNack");
 	TWCR = (1<<TWINT)|(1<<TWEN); //Start receiving, ending with a NACK
 	while ((TWCR & (1<<TWINT)) == 0);
 	*data=TWDR; //Store the data
@@ -109,8 +116,8 @@ char TWI_ReadNack(unsigned char *data){
   @return Status code, should always be nonzero
 *****************************************************************************/
 char TWI_Stop(void){
+	//printf("TWI_Stop");
 	TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
-	while ((TWCR & (1<<TWINT)) == 0);
 	return 1;
 }
 
@@ -125,16 +132,22 @@ When using this function, be sure to send a START first; this only automates cal
   @see TWI_BeginRead
 *****************************************************************************/
 char TWI_Read(unsigned char *data, int amount, bool ack){
+	//printf("TWI_Read");
 	char status=0;
 	for(int i=0;i<amount;i++){
-		if((!ack) && ((amount-1)==i)){
+		if((ack==false) && ((amount-1)==i)){
 			status=TWI_ReadNack(&data[i]); //if a NACK as chosen, receive with a NACK
+			//printf("i=%i,0x%1x",i,(unsigned)status);
 		}else{
 			status=TWI_ReadAck(&data[i]); //If we're not at the last byte yet (or NACK not selected) receive with an ACK
+			//printf("i=%i,0x%1x",i,(unsigned)status);
 		}
+		//printf("A");
 		if(status!=TWI_REC_ACK)return status; //If NACK was selected, returning here is fine since the loop is already ending
 		//will return if something goes wrong partway through
+		//printf("B");
 	}
+	//printf("C0x%1x",(unsigned)status);
 	return status;
 }
 
@@ -149,6 +162,7 @@ If you don't expect a NACK, be sure to check for it anyway.
   @see TWI_BeginWrite
 *****************************************************************************/
 char TWI_Write(unsigned char *data, int amount){
+	//printf("TWI_Write");
 	char status=0;
 	for(int i=0;i<amount;i++){
 		status=TWI_WriteByte(data[i]); //If we're not at the last byte yet (or NACK not selected) receive with an ACK
