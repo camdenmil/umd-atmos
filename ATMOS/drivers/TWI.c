@@ -11,6 +11,7 @@
 #include "drivers/usart0.h"
 #include <avr/io.h>
 #include <stdbool.h>
+#include <avr/delay.h>
 
 /*************************************************************************//**
   @brief Initializes the 2-wire Serial Interface as a master
@@ -35,14 +36,14 @@ char TWI_Init(unsigned long freq){
 *****************************************************************************/
 char TWI_BeginWrite(unsigned char address){
 	//printf("TWI_BeginWrite");
-	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
+	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN)|(1<<TWEA); //Send a start bit
 	int i=0;
 	while ((TWCR & (1<<TWINT)) == 0);
-	
+	_delay_ms(1);
 	char stat = (TWSR & TWSR_MASK);
 	if(stat!=TWI_START && stat!=TWI_REPEAT_START)return TWSR & TWSR_MASK; //Check for success
 	
-	stat = TWI_WriteByte((address<<1) & SLAW_MASK); //reset bit 0 to send a read bit, send
+	stat = TWI_WriteByte((address<<1) & SLAW_MASK); //reset bit 0 to send a write bit, send
 	//printf("0x%1x",(unsigned)stat);
 	return stat;//Return the status code
 }
@@ -54,7 +55,7 @@ char TWI_BeginWrite(unsigned char address){
 *****************************************************************************/
 char TWI_BeginRead(unsigned char address){
 	//printf("TWI_BeginRead");
-	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); //Send a start bit
+	TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN)|(1<<TWEA); //Send a start bit
 	while ((TWCR & (1<<TWINT)) == 0);
 	
 	char stat = (TWSR & TWSR_MASK);
@@ -147,7 +148,7 @@ char TWI_Read(unsigned char *data, int amount, bool ack){
 		//will return if something goes wrong partway through
 		//printf("B");
 	}
-	//printf("C0x%1x",(unsigned)status);
+	//printf("0x%1x",(unsigned)status);
 	return status;
 }
 
@@ -166,6 +167,7 @@ char TWI_Write(unsigned char *data, int amount){
 	char status=0;
 	for(int i=0;i<amount;i++){
 		status=TWI_WriteByte(data[i]); //If we're not at the last byte yet (or NACK not selected) receive with an ACK
+		//printf("0x%1x",(unsigned)status);
 		if(status!=TWI_SENT_ACK)return status; //If NACK is received on the last byte, returning here is still success
 		//will return if something goes wrong partway through
 	}

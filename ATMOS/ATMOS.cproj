@@ -239,6 +239,9 @@
     <Compile Include="drivers\PWR.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="drivers\SPI.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\TWI.c">
       <SubType>compile</SubType>
     </Compile>
@@ -279,6 +282,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\drivers\PWR.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\drivers\SPI.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\drivers\TWI.h">

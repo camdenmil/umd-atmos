@@ -64,6 +64,7 @@ C_SRCS +=  \
 ../devices/TGS2600.c \
 ../drivers/ADC.c \
 ../drivers/PWR.c \
+../drivers/SPI.c \
 ../drivers/TWI.c \
 ../drivers/usart0.c \
 ../hal/atmega256rfr2/src/hal.c \
@@ -98,6 +99,7 @@ devices/Si7020.o \
 devices/TGS2600.o \
 drivers/ADC.o \
 drivers/PWR.o \
+drivers/SPI.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -125,6 +127,7 @@ devices/Si7020.o \
 devices/TGS2600.o \
 drivers/ADC.o \
 drivers/PWR.o \
+drivers/SPI.o \
 drivers/TWI.o \
 drivers/usart0.o \
 hal/atmega256rfr2/src/hal.o \
@@ -152,6 +155,7 @@ devices/Si7020.d \
 devices/TGS2600.d \
 drivers/ADC.d \
 drivers/PWR.d \
+drivers/SPI.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -179,6 +183,7 @@ devices/Si7020.d \
 devices/TGS2600.d \
 drivers/ADC.d \
 drivers/PWR.d \
+drivers/SPI.d \
 drivers/TWI.d \
 drivers/usart0.d \
 hal/atmega256rfr2/src/hal.d \
@@ -208,6 +213,8 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

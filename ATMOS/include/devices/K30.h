@@ -24,4 +24,5 @@
 #define K30_RAM_LO_BYTE		0x09
 
 //char K30_init();
-static char K30_readCO2(unsigned char *, char);
+//static char K30_readCO2(unsigned char *, char);
+int K30_readCO2();

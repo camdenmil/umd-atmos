@@ -18,6 +18,8 @@ drivers\ADC.c
 
 drivers\PWR.c
 
+drivers\SPI.c
+
 drivers\TWI.c
 
 drivers\usart0.c
