@@ -6,19 +6,27 @@
  */ 
 
 #include <drivers/SPI.h>
+#include <avr/io.h>
 
 unsigned char buffer[16];
 
-void SPI_Init(){
-	SPCR=(1<<SPE)|(1<<SPIE);
+void SPI_SlaveInit(void)
+{
+	DDRB |= (1<<PORTB3); //Set MISO output
+	SPCR = (1<<SPE); //Enable SPI
 }
-
-void SPI_Send(char data){
-	SPDR=data;
-}
-
-char SPI_Receive(){
+char SPI_SlaveReceive(void)
+{
+	while(!(SPSR & (1<<SPIF))); //Wait for reception complete
+	
 	return SPDR;
 }
-
-ISR SP
+void SPI_SlaveTransmit(char d)
+{
+	char dummy;
+	SPDR=d;
+	while(!(SPSR & (1<<SPIF))); //Wait for reception complete
+	
+	dummy=SPDR;
+	SPDR=dummy;
+}

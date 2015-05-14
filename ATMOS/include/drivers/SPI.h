@@ -10,7 +10,9 @@
 #define SPI_H_
 
 
-
+void SPI_SlaveInit(void);
+char SPI_SlaveReceive(void);
+void SPI_SlaveTransmit(char d);
 
 
 #endif /* SPI_H_ */
